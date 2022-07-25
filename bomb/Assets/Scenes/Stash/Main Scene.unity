@@ -2853,7 +2853,7 @@ MonoBehaviour:
   networkAddress: localhost
   maxConnections: 100
   authenticator: {fileID: 0}
-  playerPrefab: {fileID: 2343469127072785291, guid: 7d50484b740ee974a95edb3ddb482025, type: 3}
+  playerPrefab: {fileID: 6395385149481567872, guid: 49cbe7f8917add746bc771a606ab1a55, type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 1
   spawnPrefabs:

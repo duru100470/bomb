@@ -14,7 +14,7 @@ public class PlayerIdle : IState
     public void OperateEnter()
     {
         player.anim.SetBool("isJumping", false);
-        Debug.Log("IdleEnter");
+        //Debug.Log("IdleEnter");
     }
 
     public void OperateExit()

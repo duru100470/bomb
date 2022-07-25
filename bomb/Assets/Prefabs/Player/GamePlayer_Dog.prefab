@@ -275,8 +275,6 @@ GameObject:
   - component: {fileID: 2497507848737155252}
   - component: {fileID: 6087083660844565300}
   - component: {fileID: 1020330599699400884}
-  - component: {fileID: 6855671477390764449}
-  - component: {fileID: 6248989481519216545}
   m_Layer: 8
   m_Name: GamePlayer_Dog
   m_TagString: Player
@@ -487,38 +485,6 @@ MonoBehaviour:
   syncInterval: 0.1
   clientAuthority: 0
   animator: {fileID: 6891252187356899448}
---- !u!114 &6855671477390764449
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2343469127072785291}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f6f3bf89aa97405989c802ba270f815, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  clientAuthority: 0
-  animator: {fileID: 3917673750202538287}
---- !u!114 &6248989481519216545
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2343469127072785291}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f6f3bf89aa97405989c802ba270f815, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  clientAuthority: 0
-  animator: {fileID: 1352181228356882103}
 --- !u!1 &2532197214126842283
 GameObject:
   m_ObjectHideFlags: 0

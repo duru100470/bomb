@@ -13,7 +13,7 @@ public class PlayerRun : IState
 
     public void OperateEnter()
     {
-        Debug.Log("RunEnter");
+        //Debug.Log("RunEnter");
         player.anim.SetBool("isRunning", true);
     }
     public void OperateExit()

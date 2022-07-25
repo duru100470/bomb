@@ -21,12 +21,12 @@ public class PlayerJump : IState
     }
     public void OperateExit()
     {
-        Debug.Log("JumpExit");
+        //Debug.Log("JumpExit");
         player.anim.SetBool("isJumping", false);
     }
     public void OperateUpdate()
     {
-        Debug.Log("JumpUpdate");
+        //Debug.Log("JumpUpdate");
         if(!isChecked && player.rigid2d.velocity.y < 0)
         {
             player.anim.SetTrigger("isJumpHigh");

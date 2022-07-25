@@ -19,8 +19,6 @@ public class PlayerStateManager : NetworkBehaviour
     // 상태를 저장할 딕셔너리 생성
     private Dictionary<PlayerState, IState> dicState = new Dictionary<PlayerState, IState>();
     private Animator VFXanim;
-    private Animator dashAnim;
-    private Animator jumpAnim;
     public List<Animator> itemAnims = new List<Animator>();
     [SerializeField] public Animator anim;
     [SerializeField] private Image curItemImage;
@@ -135,7 +133,6 @@ public class PlayerStateManager : NetworkBehaviour
         rigid2d = GetComponent<Rigidbody2D>();
         coll = GetComponent<Collider2D>();
         VFXanim = explosionVFX.GetComponent<Animator>();
-        dashAnim = dashVFX.GetComponent<Animator>();
     }
 
     // 키보드 입력 받기 및 State 갱신
@@ -160,7 +157,6 @@ public class PlayerStateManager : NetworkBehaviour
         Gizmos.DrawRay(coll.bounds.center + new Vector3(coll.bounds.extents.x, -coll.bounds.extents.y, 0), Vector2.down * .1f);
         Gizmos.DrawRay(coll.bounds.center + new Vector3(0, -coll.bounds.extents.y, 0), Vector2.down * .05f);
         Gizmos.DrawRay(coll.bounds.center + new Vector3(-coll.bounds.extents.x, -coll.bounds.extents.y, 0), Vector2.down * .1f);
-
     }
 
     private void FixedUpdate()
@@ -200,7 +196,7 @@ public class PlayerStateManager : NetworkBehaviour
     private void OnCollisionEnter2D(Collision2D other)
     {
         if (!hasAuthority) return;
-
+        
         if (other.transform.CompareTag("Player") && hasBomb && isTransferable)
         {
             var targetPSM = other.transform.GetComponent<PlayerStateManager>();
