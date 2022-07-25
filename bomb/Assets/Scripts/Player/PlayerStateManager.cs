@@ -40,6 +40,7 @@ public class PlayerStateManager : NetworkBehaviour
     [SerializeField] private float moveSpeed = 0f;
     [SerializeField] private float jumpForce = 5.0f;
     [SerializeField] private float maxSpeed = 10f;
+    [SerializeField] private float berserkMaxSpeed = 15f;
     [SerializeField] private float minSpeed = 2f;
     [SerializeField] private float accelaration = 10f;
     [SerializeField] private float ghostSpeed = 10f;
@@ -48,6 +49,7 @@ public class PlayerStateManager : NetworkBehaviour
     public float MoveSpeed => moveSpeed;
     public float JumpForce => jumpForce;
     public float MaxSpeed => maxSpeed;
+    public float BerserkMaxSpeed => berserkMaxSpeed;
     public float MinSpeed => minSpeed;
     public float Accelaration => accelaration;
     public float GhostSpeed => ghostSpeed;
@@ -71,6 +73,7 @@ public class PlayerStateManager : NetworkBehaviour
     [SyncVar] public bool isHeadingRight = false;
     [SyncVar] private bool isTransferable = true;
     [SyncVar] private bool isFlickering = false;
+    public bool isBerserk = false;
     [SyncVar(hook = nameof(OnChangeHasBomb))]
     public bool hasBomb = false;
     public bool isCasting { set; get; } = false;
@@ -607,11 +610,13 @@ public class PlayerStateManager : NetworkBehaviour
         isFlickering = false;
         if(value == 3)
         {
+            isBerserk = true;
             isFlickering = true;
             StartCoroutine(BombFlickering());
         }
         else
         {
+            isBerserk = false;
             bombStateImage.sprite = bombSpriteList[value];
         }
         
