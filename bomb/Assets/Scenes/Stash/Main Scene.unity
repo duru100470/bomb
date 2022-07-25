@@ -2795,7 +2795,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1384861476}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6442dc8070ceb41f094e44de0bf87274, type: 3}
   m_Name: 
@@ -2853,7 +2853,7 @@ MonoBehaviour:
   networkAddress: localhost
   maxConnections: 100
   authenticator: {fileID: 0}
-  playerPrefab: {fileID: 6395385149481567872, guid: 921d5ad7a9e191740b2333450292323b, type: 3}
+  playerPrefab: {fileID: 6395385149481567872, guid: 49cbe7f8917add746bc771a606ab1a55, type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 1
   spawnPrefabs:
@@ -2863,7 +2863,8 @@ MonoBehaviour:
   - {fileID: 558901428346621358, guid: 4ff98e4505727744ba80f700287a65a6, type: 3}
   - {fileID: 7802509286842065159, guid: b2d3cd33c60cd8d43b05b31252216537, type: 3}
   - {fileID: 7802509286842065159, guid: 168c63b891475d14eb05c960381177b0, type: 3}
-  showRoomGUI: 0
+  - {fileID: 6395385149481567872, guid: fe6521a871cf7f041bce086e605c4a41, type: 3}
+  showRoomGUI: 1
   minPlayers: 2
   roomPlayerPrefab: {fileID: 1158177511340733789, guid: a0ec0cd87f854054ebb858a2f78a4573, type: 3}
   RoomScene: Assets/Scenes/Stash/Room Scene.unity
@@ -2873,8 +2874,9 @@ MonoBehaviour:
   clientIndex: 0
   hostIP: 
   roomPlayerList: []
-  gamePlayerSpriteList:
-  - {fileID: 5502726573876781260, guid: 3145f986bd84f7f46b61eacfae681ddc, type: 3}
+  gamePlayer:
+  - {fileID: 6395385149481567872, guid: 49cbe7f8917add746bc771a606ab1a55, type: 3}
+  - {fileID: 6395385149481567872, guid: fe6521a871cf7f041bce086e605c4a41, type: 3}
 --- !u!4 &1384861481
 Transform:
   m_ObjectHideFlags: 0

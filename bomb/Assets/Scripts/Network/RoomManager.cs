@@ -25,10 +25,9 @@ public class RoomManager : NetworkRoomManager
 
     public override GameObject OnRoomServerCreateGamePlayer(NetworkConnectionToClient conn, GameObject roomPlayer)
     {
-        GameObject obj = Instantiate(gamePlayer[UnityEngine.Random.Range(0, gamePlayer.Count-1)]);
+        GameObject obj = Instantiate(gamePlayer[UnityEngine.Random.Range(0, gamePlayer.Count)]);
         return obj;
     }
-
 
     public override void OnRoomServerPlayersReady()
     {
