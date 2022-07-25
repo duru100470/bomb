@@ -2853,7 +2853,7 @@ MonoBehaviour:
   networkAddress: localhost
   maxConnections: 100
   authenticator: {fileID: 0}
-  playerPrefab: {fileID: 6395385149481567872, guid: 49cbe7f8917add746bc771a606ab1a55, type: 3}
+  playerPrefab: {fileID: 6395385149481567872, guid: 921d5ad7a9e191740b2333450292323b, type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 1
   spawnPrefabs:
@@ -2873,6 +2873,8 @@ MonoBehaviour:
   clientIndex: 0
   hostIP: 
   roomPlayerList: []
+  gamePlayerSpriteList:
+  - {fileID: 5502726573876781260, guid: 3145f986bd84f7f46b61eacfae681ddc, type: 3}
 --- !u!4 &1384861481
 Transform:
   m_ObjectHideFlags: 0

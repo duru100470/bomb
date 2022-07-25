@@ -8,7 +8,7 @@ public class RoomManager : NetworkRoomManager
 {
     public string hostIP;
     [SerializeField] private List<RoomPlayer> roomPlayerList = new List<RoomPlayer>();
-    
+    [SerializeField] private List<GameObject> gamePlayer = new List<GameObject>();
     public void AddPlayer(RoomPlayer player)
     {
         if (!roomPlayerList.Contains(player))
@@ -21,7 +21,14 @@ public class RoomManager : NetworkRoomManager
     public List<RoomPlayer> GetPlayerList()
     {
         return roomPlayerList;
-    } 
+    }
+
+    public override GameObject OnRoomServerCreateGamePlayer(NetworkConnectionToClient conn, GameObject roomPlayer)
+    {
+        GameObject obj = Instantiate(gamePlayer[UnityEngine.Random.Range(0, gamePlayer.Count-1)]);
+        return obj;
+    }
+
 
     public override void OnRoomServerPlayersReady()
     {
