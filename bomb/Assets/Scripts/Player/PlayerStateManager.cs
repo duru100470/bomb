@@ -18,15 +18,17 @@ public class PlayerStateManager : NetworkBehaviour
     private StateMachine stateMachine;
     // 상태를 저장할 딕셔너리 생성
     private Dictionary<PlayerState, IState> dicState = new Dictionary<PlayerState, IState>();
-    private Animator anim;
+    private Animator VFXanim;
+    [SerializeField] public Animator anim;
     [SerializeField] private Image curItemImage;
     [SerializeField] private Sprite defaultItemImage;
     [SerializeField] private Text nickNameText;
     [SerializeField] private Image bombStateImage;
     [SerializeField] private GameObject explosionVFX;
+    [SerializeField] private GameObject playerBone;
     public Sprite LeaderBoardIcon;
 
-    public SpriteRenderer spriteRenderer { set; get; }
+    public SpriteRenderer[] spriteRenderer { set; get; }
     public Rigidbody2D rigid2d { set; get; }
     public Collider2D coll { set; get; }
     public GameObject curItemObj { set; get; }
@@ -73,13 +75,13 @@ public class PlayerStateManager : NetworkBehaviour
     [SyncVar] public bool isHeadingRight = false;
     [SyncVar] private bool isTransferable = true;
     [SyncVar] private bool isFlickering = false;
+    private bool isRayCheck = true;
     public bool isBerserk = false;
     [SyncVar(hook = nameof(OnChangeHasBomb))]
     public bool hasBomb = false;
     public bool isCasting { set; get; } = false;
     public bool IsTransferable => isTransferable;
     [SyncVar] public int roundScore;
-    
     [SyncVar(hook = nameof(OnChangeNickName))]
     public string playerNickname;
     [SyncVar(hook = nameof(OnChangeBombState))] public int bombState;
@@ -97,7 +99,11 @@ public class PlayerStateManager : NetworkBehaviour
         }
         else
         {
-            GetComponent<SpriteRenderer>().material.color = new Color(1f, 0f, 0f, 1f);
+            SpriteRenderer[] renders = GetComponentsInChildren<SpriteRenderer>();
+            foreach(var rend in renders)
+            {
+                rend.material.color = new Color(1f, 0f, 0f, 1f);
+            }
         }
         
         // 게임 매니저에 해당 플레이어 추가
@@ -120,10 +126,10 @@ public class PlayerStateManager : NetworkBehaviour
         // 시작 상태를 Idle로 설정
         stateMachine = new StateMachine(dicState[PlayerState.Idle]);
 
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer = GetComponentsInChildren<SpriteRenderer>();
         rigid2d = GetComponent<Rigidbody2D>();
         coll = GetComponent<Collider2D>();
-        anim = explosionVFX.GetComponent<Animator>();
+        VFXanim = explosionVFX.GetComponent<Animator>();
     }
 
     // 키보드 입력 받기 및 State 갱신
@@ -133,8 +139,8 @@ public class PlayerStateManager : NetworkBehaviour
         if (!isLocalPlayer) return;
         //게임매니저의 이동가능 플래그가 true일때만 이동 가능
         if(!GameManager.Instance.isPlayerMovable) return;
-        KeyboardInput();
         stateMachine.DoOperateUpdate();
+        KeyboardInput();
         // dash 속도 감소
         if (isCasting)
         {
@@ -144,11 +150,23 @@ public class PlayerStateManager : NetworkBehaviour
         }
     }
 
+    private void OnDrawGizmos() {
+        Gizmos.DrawRay(coll.bounds.center + new Vector3(coll.bounds.extents.x, -coll.bounds.extents.y, 0), Vector2.down * .1f);
+        Gizmos.DrawRay(coll.bounds.center + new Vector3(0, -coll.bounds.extents.y, 0), Vector2.down * .05f);
+        Gizmos.DrawRay(coll.bounds.center + new Vector3(-coll.bounds.extents.x, -coll.bounds.extents.y, 0), Vector2.down * .1f);
+
+    }
+
     private void FixedUpdate()
     {
-        RaycastHit2D raycastHitGroundLeft = Physics2D.Raycast(coll.bounds.center + new Vector3(coll.bounds.extents.x, -coll.bounds.extents.y, 0), Vector2.down, .1f, LayerMask.GetMask("Ground"));
-        RaycastHit2D raycastHitGroundRight = Physics2D.Raycast(coll.bounds.center + new Vector3(-coll.bounds.extents.x, -coll.bounds.extents.y, 0), Vector2.down, .1f, LayerMask.GetMask("Ground"));
-        if (raycastHitGroundLeft.collider != null && raycastHitGroundRight.collider != null)
+        if(!isRayCheck) return;
+        RaycastHit2D raycastHitGroundLeft = Physics2D.Raycast(coll.bounds.center + new Vector3(coll.bounds.extents.x, -coll.bounds.extents.y, 0), Vector2.down, .08f, LayerMask.GetMask("Ground"));
+        RaycastHit2D raycastHitGroundMiddle = Physics2D.Raycast(coll.bounds.center + new Vector3(0, -coll.bounds.extents.y, 0), Vector2.down, .04f, LayerMask.GetMask("Ground"));
+        RaycastHit2D raycastHitGroundRight = Physics2D.Raycast(coll.bounds.center + new Vector3(-coll.bounds.extents.x, -coll.bounds.extents.y, 0), Vector2.down, .08f, LayerMask.GetMask("Ground"));
+        bool leftbool = raycastHitGroundLeft.collider != null;
+        bool rightbool = raycastHitGroundRight.collider != null;
+        bool middlebool = raycastHitGroundMiddle.collider != null;
+        if ((leftbool && middlebool) || (rightbool && middlebool))
         {
             isWallJumpable = true;
             isGround = true;
@@ -168,7 +186,7 @@ public class PlayerStateManager : NetworkBehaviour
             isWallAttached = false;
         }
 
-        spriteRenderer.flipX = !isHeadingRight;
+        playerBone.transform.localScale = new Vector3(1,isHeadingRight ? -1 : 1,1);
     }
 
     // 다른 플레이어 충돌
@@ -222,6 +240,7 @@ public class PlayerStateManager : NetworkBehaviour
         // Stun, Dead상태가 아니거나 돌진 중이 아닐 때 행동 가능
         if (stateMachine.CurruentState != dicState[PlayerState.Stun] && stateMachine.CurruentState != dicState[PlayerState.Dead] && !isCasting)
         {
+
             // Run State
             if (Input.GetAxisRaw("Horizontal") != 0)
             {
@@ -233,7 +252,7 @@ public class PlayerStateManager : NetworkBehaviour
             }
 
             // Jump State
-            if(isGround || isWallJumpable) 
+            if(isGround || (isWallJumpable && isWallAttached )) 
             {
                 hangTimeCnt = hangTime;
             }
@@ -253,6 +272,8 @@ public class PlayerStateManager : NetworkBehaviour
 
             if (jumpBufferTimeCnt > 0f && hangTimeCnt > 0f)
             {
+                StartCoroutine(RayCheckInactive(.2f));
+                isGround = false;
                 isWallJumpable = false;
                 stateMachine.SetState(dicState[PlayerState.Jump]);
                 jumpBufferTimeCnt = 0f;
@@ -383,6 +404,12 @@ public class PlayerStateManager : NetworkBehaviour
         }
     }
 
+    private IEnumerator RayCheckInactive(float time)
+    {
+        isRayCheck = false;
+        yield return new WaitForSeconds(time);
+        isRayCheck = true;
+    }
     #endregion IEnumerators
 
     #region CommandFunc
@@ -498,7 +525,7 @@ public class PlayerStateManager : NetworkBehaviour
     [ClientRpc]
     public void RpcDead()
     {
-        anim.SetTrigger("Explode");
+        VFXanim.SetTrigger("Explode");
         if (hasAuthority)
         {
             stateMachine.SetState(dicState[PlayerState.Dead]);
@@ -506,7 +533,11 @@ public class PlayerStateManager : NetworkBehaviour
         else
         {
             // 죽으면 모습 안보이게 (임시)
-            spriteRenderer.color = new Color(1f, 1f, 1f, 0.5f);
+            foreach(var rend in spriteRenderer)
+            {
+                rend.color = new Color(1f, 1f, 1f, 0.5f);    
+            }
+            
             this.gameObject.layer = LayerMask.NameToLayer("GhostPlayer");
         }
     }
@@ -550,7 +581,10 @@ public class PlayerStateManager : NetworkBehaviour
     public void RpcPlayerRoundReset(){
         rigid2d.velocity = Vector2.zero;
         stateMachine.SetState(dicState[PlayerState.Idle]);
-        spriteRenderer.color = new Color(1f,1f,1f,1f);
+        foreach(var rend in spriteRenderer)
+        {
+            rend.color = new Color(1f, 1f, 1f, 1f);    
+        }
         this.gameObject.layer = LayerMask.NameToLayer("Player");
     }
 

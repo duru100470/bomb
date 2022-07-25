@@ -13,14 +13,23 @@ public class PlayerStun : IState
 
     public void OperateEnter()
     {
-        player.spriteRenderer.color = new Color(1, 1, 1, 0.5f);
+        player.anim.SetTrigger("isStunning");
+        player.anim.SetBool("isStunned", true);
+        foreach(var rend in player.spriteRenderer)
+        {
+            rend.color = new Color(1f, 1f, 1f, 0.5f);    
+        }
         player.coll.sharedMaterial = player.stunPhysicsMat;
     }
     public void OperateExit()
     {
+        player.anim.SetBool("isStunned", false);
         player.coll.sharedMaterial = player.idlePhysicsMat;
         player.rigid2d.velocity = new Vector2(Mathf.Clamp(player.rigid2d.velocity.x, -player.MaxSpeed, player.MaxSpeed), player.rigid2d.velocity.y);
-        player.spriteRenderer.color = new Color(1, 1, 1, 1f);
+        foreach(var rend in player.spriteRenderer)
+        {
+            rend.color = new Color(1f, 1f, 1f, 1f);    
+        }
     }
     public void OperateUpdate()
     {
