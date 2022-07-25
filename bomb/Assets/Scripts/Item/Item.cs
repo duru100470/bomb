@@ -15,7 +15,7 @@ public abstract class Item : NetworkBehaviour
     [SyncVar] public PlayerStateManager player;
     public GameObject itemObj;
     public ItemType Type => type;
-    [SerializeField] private ItemType type;
+    [SerializeField] protected ItemType type;
     public Sprite itemSprite;
     public ItemSpawner spawner;
     private SpriteRenderer spriteRenderer;
@@ -29,6 +29,7 @@ public abstract class Item : NetworkBehaviour
     public void OnUse()
     {
         _OnUse();
+        player.CmdSetItemAnim((int)type);
         CmdDestroy(netId);
     }
     public abstract void _OnUse();

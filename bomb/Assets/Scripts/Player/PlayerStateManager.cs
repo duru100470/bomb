@@ -19,12 +19,17 @@ public class PlayerStateManager : NetworkBehaviour
     // 상태를 저장할 딕셔너리 생성
     private Dictionary<PlayerState, IState> dicState = new Dictionary<PlayerState, IState>();
     private Animator VFXanim;
+    private Animator dashAnim;
+    private Animator jumpAnim;
+    public List<Animator> itemAnims = new List<Animator>();
     [SerializeField] public Animator anim;
     [SerializeField] private Image curItemImage;
     [SerializeField] private Sprite defaultItemImage;
     [SerializeField] private Text nickNameText;
     [SerializeField] private Image bombStateImage;
     [SerializeField] private GameObject explosionVFX;
+    [SerializeField] private GameObject dashVFX;
+    [SerializeField] private GameObject jumpVFX;
     [SerializeField] private GameObject playerBone;
     public Sprite LeaderBoardIcon;
 
@@ -130,6 +135,7 @@ public class PlayerStateManager : NetworkBehaviour
         rigid2d = GetComponent<Rigidbody2D>();
         coll = GetComponent<Collider2D>();
         VFXanim = explosionVFX.GetComponent<Animator>();
+        dashAnim = dashVFX.GetComponent<Animator>();
     }
 
     // 키보드 입력 받기 및 State 갱신
@@ -159,7 +165,6 @@ public class PlayerStateManager : NetworkBehaviour
 
     private void FixedUpdate()
     {
-        if(!isRayCheck) return;
         RaycastHit2D raycastHitGroundLeft = Physics2D.Raycast(coll.bounds.center + new Vector3(coll.bounds.extents.x, -coll.bounds.extents.y, 0), Vector2.down, .08f, LayerMask.GetMask("Ground"));
         RaycastHit2D raycastHitGroundMiddle = Physics2D.Raycast(coll.bounds.center + new Vector3(0, -coll.bounds.extents.y, 0), Vector2.down, .04f, LayerMask.GetMask("Ground"));
         RaycastHit2D raycastHitGroundRight = Physics2D.Raycast(coll.bounds.center + new Vector3(-coll.bounds.extents.x, -coll.bounds.extents.y, 0), Vector2.down, .08f, LayerMask.GetMask("Ground"));
@@ -180,13 +185,15 @@ public class PlayerStateManager : NetworkBehaviour
         if(raycastHitWall.collider != null)
         {
             isWallAttached = true;
-        }
+        } 
         else
         {
             isWallAttached = false;
         }
 
         playerBone.transform.localScale = new Vector3(1,isHeadingRight ? -1 : 1,1);
+        dashVFX.transform.localScale = new Vector3(isHeadingRight ? -1 : 1,1,1);
+        dashVFX.transform.localPosition = new Vector3(0.4f * (isHeadingRight ? -1 : 1), 0, 0);
     }
 
     // 다른 플레이어 충돌
@@ -272,7 +279,6 @@ public class PlayerStateManager : NetworkBehaviour
 
             if (jumpBufferTimeCnt > 0f && hangTimeCnt > 0f)
             {
-                StartCoroutine(RayCheckInactive(.2f));
                 isGround = false;
                 isWallJumpable = false;
                 stateMachine.SetState(dicState[PlayerState.Jump]);
@@ -495,6 +501,18 @@ public class PlayerStateManager : NetworkBehaviour
     public void CmdSetBombStete(int value)
     {
         bombState = value;
+    }
+
+    [Command]
+    public void CmdSetItemAnim(int idx)
+    {
+        RpcSetItemAnim(idx);
+    }
+
+    [ClientRpc]
+    public void RpcSetItemAnim(int idx)
+    {
+        itemAnims[idx].SetTrigger("Trigger");
     }
 
     #endregion CommandFunc
