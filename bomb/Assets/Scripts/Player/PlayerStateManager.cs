@@ -66,6 +66,8 @@ public class PlayerStateManager : NetworkBehaviour
     [SyncVar(hook = nameof(OnChangePlayerLocalBombTime))]
     public float playerLocalBombTime;
     [SerializeField] private bool isGround = false;
+    [SerializeField] private bool isWallJumpable = true;
+    [SerializeField] public bool isWallAttached = false;
     [SyncVar] public bool isHeadingRight = false;
     [SyncVar] private bool isTransferable = true;
     [SyncVar] private bool isFlickering = false;
@@ -141,9 +143,28 @@ public class PlayerStateManager : NetworkBehaviour
 
     private void FixedUpdate()
     {
-        RaycastHit2D raycastHit = Physics2D.BoxCast(coll.bounds.center, coll.bounds.size, 0f, Vector2.down, 0.02f, LayerMask.GetMask("Ground"));
-        if (raycastHit.collider != null) isGround = true;
-        else isGround = false;
+        RaycastHit2D raycastHitGroundLeft = Physics2D.Raycast(coll.bounds.center + new Vector3(coll.bounds.extents.x, -coll.bounds.extents.y, 0), Vector2.down, .1f, LayerMask.GetMask("Ground"));
+        RaycastHit2D raycastHitGroundRight = Physics2D.Raycast(coll.bounds.center + new Vector3(-coll.bounds.extents.x, -coll.bounds.extents.y, 0), Vector2.down, .1f, LayerMask.GetMask("Ground"));
+        if (raycastHitGroundLeft.collider != null && raycastHitGroundRight.collider != null)
+        {
+            isWallJumpable = true;
+            isGround = true;
+        } 
+        else
+        {
+            isGround = false;
+        } 
+
+        RaycastHit2D raycastHitWall = Physics2D.Raycast(coll.bounds.center + new Vector3(coll.bounds.extents.x * (isHeadingRight ? 1 : -1), 0,0), Vector2.right * (isHeadingRight ? 1 : -1), .1f, LayerMask.GetMask("Ground"));
+        if(raycastHitWall.collider != null)
+        {
+            isWallAttached = true;
+        }
+        else
+        {
+            isWallAttached = false;
+        }
+
         spriteRenderer.flipX = !isHeadingRight;
     }
 
@@ -209,7 +230,7 @@ public class PlayerStateManager : NetworkBehaviour
             }
 
             // Jump State
-            if(isGround) 
+            if(isGround || isWallJumpable) 
             {
                 hangTimeCnt = hangTime;
             }
@@ -229,6 +250,7 @@ public class PlayerStateManager : NetworkBehaviour
 
             if (jumpBufferTimeCnt > 0f && hangTimeCnt > 0f)
             {
+                isWallJumpable = false;
                 stateMachine.SetState(dicState[PlayerState.Jump]);
                 jumpBufferTimeCnt = 0f;
             }   
