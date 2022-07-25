@@ -97,6 +97,7 @@ public class GameManager : NetworkBehaviour
         {
             yield return null;
         }
+        yield return new WaitForSeconds(.5f);
         RpcSetLeaderBoard();
 
         alivePlayers = players.ToList();

@@ -64,7 +64,7 @@ public class UI_PlayScene : NetworkBehaviour
 
     public IEnumerator DisplayLoadingPanel(IEnumerator enume)
     {
-        yield return new WaitForSeconds(.5f);
+        yield return new WaitForSeconds(1f);
         yield return StartCoroutine(enume);
         
         Image back = Panel_Loading.transform.GetChild(0).GetComponent<Image>();
