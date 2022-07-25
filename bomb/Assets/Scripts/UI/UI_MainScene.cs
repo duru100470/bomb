@@ -221,9 +221,10 @@ public class UI_MainScene : MonoBehaviour
         yield break;
     }
 
-    public string Decrypt(string str)
+    public string Decrypt(string input)
     {
         string ret = String.Empty;
+        string str = CheckCapital(input);
         for(int i=0; i< str.Length/2; i++)
         {
             string cur = str.Substring(i*2, 2);
@@ -235,6 +236,19 @@ public class UI_MainScene : MonoBehaviour
             ret += intValue;
             if(i != str.Length/2 -1) ret += ".";
         }
+        return ret;
+    }
+
+    public string CheckCapital(string str)
+    {
+        string ret = String.Empty;
+        for(int i=0; i<str.Length; i++)
+        {
+            char cur = str[i];
+            if(cur <= 'z' && cur >= 'a') cur = (char)(cur + 'A' - 'a');
+            ret += cur.ToString();
+        }
+        Debug.Log(ret);
         return ret;
     }
 }

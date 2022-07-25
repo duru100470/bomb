@@ -22,12 +22,6 @@ public class RoomManager : NetworkRoomManager
     {
         return roomPlayerList;
     } 
-    
-    public override void OnStartHost()
-    {
-        //hostIP = Encrypt(PlayerSetting.hostIP);
-        //Debug.Log(hostIP);
-    }
 
     public override void OnRoomServerPlayersReady()
     {
@@ -43,23 +37,6 @@ public class RoomManager : NetworkRoomManager
             int cur = Int32.Parse(strng);
             if(cur < 17) ret += "0";
             ret += Int32.Parse(strng).ToString("X");
-        }
-        return ret;
-    }
-
-    public string Decrypt(string str)
-    {
-        string ret = String.Empty;
-        for(int i=0; i< str.Length/2; i++)
-        {
-            string cur = str.Substring(i*2, 2);
-            Debug.Log(cur);
-            int first = cur[0] >= 'A' ? cur[0] - 'A' + 10 : cur[0] - '0';
-            int second = cur[1] >= 'A' ? cur[1] - 'A' + 10 : cur[1] - '0';
-            int intValue = first * 16 + second;
-            Debug.Log(intValue);
-            ret += intValue;
-            if(i != str.Length/2 -1) ret += ".";
         }
         return ret;
     }

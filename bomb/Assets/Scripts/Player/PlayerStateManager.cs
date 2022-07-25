@@ -29,6 +29,7 @@ public class PlayerStateManager : NetworkBehaviour
     [SerializeField] private GameObject dashVFX;
     [SerializeField] private GameObject jumpVFX;
     [SerializeField] private GameObject playerBone;
+    public GameObject stunVFX;
     public Sprite LeaderBoardIcon;
 
     public SpriteRenderer[] spriteRenderer { set; get; }

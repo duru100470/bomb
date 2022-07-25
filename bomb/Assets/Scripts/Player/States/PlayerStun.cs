@@ -13,6 +13,7 @@ public class PlayerStun : IState
 
     public void OperateEnter()
     {
+        player.stunVFX.SetActive(true);
         player.anim.SetTrigger("isStunning");
         player.anim.SetBool("isStunned", true);
         foreach(var rend in player.spriteRenderer)
@@ -23,6 +24,7 @@ public class PlayerStun : IState
     }
     public void OperateExit()
     {
+        player.stunVFX.SetActive(false);
         player.anim.SetBool("isStunned", false);
         player.coll.sharedMaterial = player.idlePhysicsMat;
         player.rigid2d.velocity = new Vector2(Mathf.Clamp(player.rigid2d.velocity.x, -player.MaxSpeed, player.MaxSpeed), player.rigid2d.velocity.y);
