@@ -4,6 +4,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using Mirror;
 using UnityEngine.EventSystems;
+using System;
+using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 
 public class UI_Lobby : NetworkBehaviour
 {
@@ -20,7 +24,7 @@ public class UI_Lobby : NetworkBehaviour
     {
         if(isServer)
         {
-            hostIP = PlayerSetting.hostIP;
+            hostIP = manager.Encrypt(PlayerSetting.hostIP);
             buttonPlay_text.text = "PLAY";
         }
         else
@@ -69,5 +73,4 @@ public class UI_Lobby : NetworkBehaviour
             }
         }
     }
-
 }

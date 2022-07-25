@@ -5,6 +5,8 @@ using UnityEngine.UI;
 using Mirror;
 using System.Net;
 using System.Net.Sockets;
+using System;
+
 public class UI_MainScene : MonoBehaviour
 {
     RoomManager manager;
@@ -125,7 +127,7 @@ public class UI_MainScene : MonoBehaviour
         if(!playerNickname.text.Equals(string.Empty))
         {
             PlayerSetting.playerNickname = playerNickname.text;
-            NetworkManager.singleton.networkAddress = joinMatchInput.text;
+            NetworkManager.singleton.networkAddress = Decrypt(joinMatchInput.text);
             NetworkManager.singleton.StartClient();
         }
         else
@@ -217,5 +219,22 @@ public class UI_MainScene : MonoBehaviour
             yield return null;
         }
         yield break;
+    }
+
+    public string Decrypt(string str)
+    {
+        string ret = String.Empty;
+        for(int i=0; i< str.Length/2; i++)
+        {
+            string cur = str.Substring(i*2, 2);
+            Debug.Log(cur);
+            int first = cur[0] >= 'A' ? cur[0] - 'A' + 10 : cur[0] - '0';
+            int second = cur[1] >= 'A' ? cur[1] - 'A' + 10 : cur[1] - '0';
+            int intValue = first * 16 + second;
+            Debug.Log(intValue);
+            ret += intValue;
+            if(i != str.Length/2 -1) ret += ".";
+        }
+        return ret;
     }
 }
