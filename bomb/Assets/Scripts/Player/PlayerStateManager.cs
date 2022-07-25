@@ -29,6 +29,8 @@ public class PlayerStateManager : NetworkBehaviour
     [SerializeField] private GameObject dashVFX;
     [SerializeField] private GameObject jumpVFX;
     [SerializeField] private GameObject playerBone;
+    [SerializeField] private GameObject playerSprites;
+    private SpriteRenderer ghostRenderer;
     public GameObject stunVFX;
     public Sprite LeaderBoardIcon;
 
@@ -109,7 +111,7 @@ public class PlayerStateManager : NetworkBehaviour
                 rend.material.color = new Color(1f, 0f, 0f, 1f);
             }
         }
-        
+
         // 게임 매니저에 해당 플레이어 추가
         GameManager.Instance.AddPlayer(this);
 
@@ -134,6 +136,7 @@ public class PlayerStateManager : NetworkBehaviour
         rigid2d = GetComponent<Rigidbody2D>();
         coll = GetComponent<Collider2D>();
         VFXanim = explosionVFX.GetComponent<Animator>();
+        ghostRenderer = GetComponent<SpriteRenderer>();
     }
 
     // 키보드 입력 받기 및 State 갱신
@@ -189,6 +192,7 @@ public class PlayerStateManager : NetworkBehaviour
         }
 
         playerBone.transform.localScale = new Vector3(1,isHeadingRight ? -1 : 1,1);
+        ghostRenderer.flipX = isHeadingRight;
         dashVFX.transform.localScale = new Vector3(isHeadingRight ? -1 : 1,1,1);
         dashVFX.transform.localPosition = new Vector3(0.4f * (isHeadingRight ? -1 : 1), 0, 0);
     }
@@ -506,10 +510,17 @@ public class PlayerStateManager : NetworkBehaviour
         RpcSetItemAnim(idx);
     }
 
-    [ClientRpc]
-    public void RpcSetItemAnim(int idx)
+    [Command]
+    public void CmdSetDeadSprite(bool isDead)
     {
-        itemAnims[idx].SetTrigger("Trigger");
+        RpcSetDeadSprite(isDead);
+    }
+
+    [ClientRpc]
+    public void RpcSetDeadSprite(bool isDead)
+    {
+        ghostRenderer.enabled = isDead;
+        playerSprites.SetActive(!isDead);
     }
 
     #endregion CommandFunc
@@ -609,7 +620,12 @@ public class PlayerStateManager : NetworkBehaviour
         curItem = null;
         curItemImage.sprite = defaultItemImage;
     }
-
+    
+    [ClientRpc]
+    public void RpcSetItemAnim(int idx)
+    {
+        itemAnims[idx].SetTrigger("Trigger");
+    }
     #endregion ClientRpcFunc
 
     #region SyncVarHookFunc

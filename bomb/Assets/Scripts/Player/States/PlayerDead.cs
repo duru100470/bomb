@@ -13,6 +13,7 @@ public class PlayerDead : IState
 
     public void OperateEnter()
     {
+        player.CmdSetDeadSprite(true);
         player.gameObject.layer = LayerMask.NameToLayer("GhostPlayer");
         player.rigid2d.gravityScale = 0;
         player.rigid2d.velocity = Vector2.zero;
@@ -23,6 +24,7 @@ public class PlayerDead : IState
     }
     public void OperateExit()
     {
+        player.CmdSetDeadSprite(false);
         player.gameObject.layer = LayerMask.NameToLayer("Player");
         player.rigid2d.gravityScale = 1f;
         foreach(var rend in player.spriteRenderer)
