@@ -1,0 +1,109 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using Mirror;
+
+public class LobbyPlayerMover : NetworkBehaviour
+{
+    [SyncVar(hook = nameof(OnSetNickName))] public string playerNickname = string.Empty;
+    [SerializeField] Text nameText;
+
+    public SpriteRenderer spriteRenderer { set; get; }
+    public Rigidbody2D rigid2d { set; get; }
+    public Collider2D coll { set; get; }
+    public PhysicsMaterial2D idlePhysicsMat;
+    public PhysicsMaterial2D stunPhysicsMat;
+
+    [SerializeField] private float moveSpeed = 0f;
+    [SerializeField] private float jumpForce = 5.0f;
+    [SerializeField] private float maxSpeed = 10f;
+    [SerializeField] private float minSpeed = 2f;
+    [SerializeField] private float accelaration = 10f;
+    [SerializeField] private float ghostSpeed = 10f;
+
+    public float MoveSpeed => moveSpeed;
+    public float JumpForce => jumpForce;
+    public float MaxSpeed => maxSpeed;
+    public float MinSpeed => minSpeed;
+    public float Accelaration => accelaration;
+    public float GhostSpeed => ghostSpeed;
+    private float jumpBufferTime = 0.2f;
+    private float jumpBufferTimeCnt;
+    private float hangTime = 0.1f;
+    private float hangTimeCnt;
+    [SerializeField] private bool isGround = false;
+    [SyncVar] public bool isHeadingRight = false;
+    public bool isReady = false;
+    UI_Lobby UI_Lobby;
+
+    private void Start() {
+        //임시
+        GetComponent<SpriteRenderer>().material.color = new Color(1f, 0f, 0f, 1f);
+    }
+
+    public void OnSetNickName(string _, string value)
+    {
+        nameText.text = value;
+    }
+
+    private void Update()
+    {
+        if (!hasAuthority) return;
+        KeyboardInput();
+    }
+
+    private void FixedUpdate()
+    {
+        if(!isLocalPlayer) return;
+        RaycastHit2D raycastHit = Physics2D.BoxCast(coll.bounds.center, coll.bounds.size, 0f, Vector2.down, 0.02f, LayerMask.GetMask("Ground"));
+        if (raycastHit.collider != null) isGround = true;
+        else isGround = false;
+        spriteRenderer.flipX = !isHeadingRight;
+    }
+
+    // 키보드 입력 제어
+    private void KeyboardInput()
+    {
+        // Run State
+        if (Input.GetAxisRaw("Horizontal") != 0)
+        {
+            float direction = Input.GetAxisRaw("Horizontal");
+            if (direction != 0) isHeadingRight = direction > 0 ? true : false;
+            float curAccel = Mathf.Abs(rigid2d.velocity.x) < minSpeed ? accelaration * 2 : accelaration;
+            float xVelocity = rigid2d.velocity.x + direction * curAccel * Time.deltaTime;
+            rigid2d.velocity = new Vector2(Mathf.Clamp(xVelocity, -maxSpeed, maxSpeed), rigid2d.velocity.y);
+        }
+
+        // Jump State
+        if(isGround) 
+        {
+            hangTimeCnt = hangTime;
+        }
+        else
+        {
+            hangTimeCnt -= Time.deltaTime;
+        }
+        
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            jumpBufferTimeCnt = jumpBufferTime;
+        }
+        else
+        {
+            jumpBufferTimeCnt -= Time.deltaTime;
+        }
+
+        if (jumpBufferTimeCnt > 0f && hangTimeCnt > 0f)
+        {
+            rigid2d.velocity = new Vector2(rigid2d.velocity.x, jumpForce);
+            jumpBufferTimeCnt = 0f;
+        }   
+    }
+
+    [Command]
+    public void CmdSetNickName(string nick)
+    {
+        this.playerNickname = nick;
+    }
+}
