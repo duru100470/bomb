@@ -44,6 +44,7 @@ public class RoomPlayer : NetworkRoomPlayer
         {
             UI_Lobby = (UI_Lobby)FindObjectOfType(typeof(UI_Lobby));
             UI_Lobby.player = this;
+            Debug.Log(PlayerSetting.playerNickname);
             CmdSetNickName(PlayerSetting.playerNickname);
             spriteRenderer = GetComponent<SpriteRenderer>();
             rigid2d = GetComponent<Rigidbody2D>();
@@ -119,6 +120,7 @@ public class RoomPlayer : NetworkRoomPlayer
     [Command]
     public void CmdSetNickName(string nick)
     {
-        playerNickname = nick;
+        this.playerNickname = nick;
     }
+
 }

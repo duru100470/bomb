@@ -105,7 +105,6 @@ public class UI_MainScene : MonoBehaviour
     {
         if(!playerNickname.text.Equals(string.Empty))
         {
-
             var host = Dns.GetHostEntry(Dns.GetHostName());
             foreach (var ip in host.AddressList)
             {
@@ -236,6 +235,7 @@ public class UI_MainScene : MonoBehaviour
             ret += intValue;
             if(i != str.Length/2 -1) ret += ".";
         }
+        Debug.Log(ret);
         return ret;
     }
 

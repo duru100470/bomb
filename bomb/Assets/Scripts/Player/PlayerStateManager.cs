@@ -81,7 +81,6 @@ public class PlayerStateManager : NetworkBehaviour
     [SyncVar] public bool isHeadingRight = false;
     [SyncVar] private bool isTransferable = true;
     [SyncVar] private bool isFlickering = false;
-    private bool isRayCheck = true;
     public bool isBerserk = false;
     [SyncVar(hook = nameof(OnChangeHasBomb))]
     public bool hasBomb = false;
@@ -410,13 +409,7 @@ public class PlayerStateManager : NetworkBehaviour
             if(!isFlickering) yield break;
         }
     }
-
-    private IEnumerator RayCheckInactive(float time)
-    {
-        isRayCheck = false;
-        yield return new WaitForSeconds(time);
-        isRayCheck = true;
-    }
+    
     #endregion IEnumerators
 
     #region CommandFunc
