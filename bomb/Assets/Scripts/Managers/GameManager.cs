@@ -87,7 +87,7 @@ public class GameManager : NetworkBehaviour
             StartCoroutine(BombRedistribution(deadPlayer.transform.position));
         }
     }
-    
+
     // 게임이 시작될 시 실행되는 코루틴
     private IEnumerator GameReady()
     {

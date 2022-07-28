@@ -31,6 +31,7 @@ public class UI_Lobby : NetworkBehaviour
         {
             buttonPlay_text.text = "READY";
         }
+        Debug.Log(PlayerSetting.playerNickname);
         text.text = hostIP;
     }
 

@@ -49,7 +49,7 @@ public class UI_MainScene : MonoBehaviour
     void Start()
     {
         manager = NetworkManager.singleton as RoomManager;
-        joinMatchInput.text = "localhost";
+        //joinMatchInput.text = "localhost";
 
         playButton.onClick.AddListener(Play);
         tutorialButton.onClick.AddListener(Tutorial);
@@ -227,15 +227,12 @@ public class UI_MainScene : MonoBehaviour
         for(int i=0; i< str.Length/2; i++)
         {
             string cur = str.Substring(i*2, 2);
-            Debug.Log(cur);
             int first = cur[0] >= 'A' ? cur[0] - 'A' + 10 : cur[0] - '0';
             int second = cur[1] >= 'A' ? cur[1] - 'A' + 10 : cur[1] - '0';
             int intValue = first * 16 + second;
-            Debug.Log(intValue);
             ret += intValue;
             if(i != str.Length/2 -1) ret += ".";
         }
-        Debug.Log(ret);
         return ret;
     }
 
@@ -248,7 +245,6 @@ public class UI_MainScene : MonoBehaviour
             if(cur <= 'z' && cur >= 'a') cur = (char)(cur + 'A' - 'a');
             ret += cur.ToString();
         }
-        Debug.Log(ret);
         return ret;
     }
 }
