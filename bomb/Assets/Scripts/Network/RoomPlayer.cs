@@ -6,8 +6,8 @@ using UnityEngine.UI;
 
 public class RoomPlayer : NetworkRoomPlayer
 {
-    [SyncVar]
-    public string nickname;
+    // [SyncVar]
+    // public string nickname;
     RoomManager manager = NetworkManager.singleton as RoomManager;
     LobbyPlayerMover lobbyPlayer;
 
@@ -26,7 +26,7 @@ public class RoomPlayer : NetworkRoomPlayer
     [Command]
     public void CmdSetNickname(string name)
     {
-        nickname = name;
+        // nickname = name;
         lobbyPlayer.playerNickname = name;
     }
 
@@ -37,5 +37,4 @@ public class RoomPlayer : NetworkRoomPlayer
         NetworkServer.Spawn(player, connectionToClient);
         CmdSetNickname(PlayerSetting.playerNickname);
     }
-
 }

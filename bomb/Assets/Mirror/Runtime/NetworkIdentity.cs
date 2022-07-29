@@ -1018,7 +1018,7 @@ namespace Mirror
             // way to mess up another component's deserialization
             try
             {
-                //Debug.Log($"OnDeserializeSafely: {comp.name} component:{comp.GetType()} sceneId:{sceneId:X} length:{contentSize}");
+                Debug.Log($"OnDeserializeSafely: {comp.name} component:{comp.GetType()} sceneId:{sceneId:X} length:{contentSize}");
                 comp.OnDeserialize(reader, initialState);
             }
             catch (Exception e)
